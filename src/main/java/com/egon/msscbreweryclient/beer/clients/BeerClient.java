@@ -5,6 +5,7 @@ import com.egon.msscbreweryclient.client.BreweryClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.UUID;
 
 @Component
@@ -16,7 +17,23 @@ public class BeerClient extends BreweryClient {
     }
 
     public BeerDto getById(UUID id) {
-        return restTemplate.getForObject(String.format("%s/%s", getBeerPath(), id.toString()), BeerDto.class);
+        return restTemplate.getForObject(getBeerPath(id), BeerDto.class);
+    }
+
+    public URI save(BeerDto beerDto) {
+        return restTemplate.postForLocation(getBeerPath(), beerDto);
+    }
+
+    public void update(UUID id, BeerDto beerDto) {
+        restTemplate.put(getBeerPath(id), beerDto);
+    }
+
+    public void delete(UUID id) {
+        restTemplate.delete(getBeerPath(id));
+    }
+
+    private String getBeerPath(UUID id) {
+        return String.format("%s/%s", getBeerPath(), id.toString());
     }
 
     private String getBeerPath() {
